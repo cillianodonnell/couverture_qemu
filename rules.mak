@@ -31,7 +31,7 @@ endif
 %.o: %.m
 	$(call quiet-command,$(CC) $(QEMU_INCLUDES) $(QEMU_CFLAGS) $(QEMU_DGFLAGS) $(CFLAGS) -c -o $@ $<,"  OBJC  $(TARGET_DIR)$@")
 
-LINK = $(call quiet-command,$(CC) $(QEMU_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $(sort $(1)) $(LIBS),"  LINK  $(TARGET_DIR)$@")
+LINK = $(call quiet-command,$(CC) $(QEMU_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $(sort $(1)) $(LIBS) -lpthread -lrt,"  LINK  $(TARGET_DIR)$@")
 
 %$(EXESUF): %.o
 	$(call LINK,$^)
@@ -39,6 +39,7 @@ LINK = $(call quiet-command,$(CC) $(QEMU_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $(so
 %.a:
 	$(call quiet-command,rm -f $@ && $(AR) rcs $@ $^,"  AR    $(TARGET_DIR)$@")
 
+V=1
 quiet-command = $(if $(V),$1,$(if $(2),@echo $2 && $1, @$1))
 
 # cc-option

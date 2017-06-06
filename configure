@@ -2046,12 +2046,12 @@ if test "$mingw32" = yes; then
 else
     glib_req_ver=2.12
 fi
-if $pkg_config --atleast-version=$glib_req_ver gthread-2.0 > /dev/null 2>&1
+if $pkg_config --atleast-version=$glib_req_ver glib-2.0 > /dev/null 2>&1
 then
-    glib_cflags=`$pkg_config --cflags gthread-2.0 2>/dev/null`
-    glib_libs=`$pkg_config --libs gthread-2.0 2>/dev/null`
+    glib_cflags=`$pkg_config --cflags glib-2.0 2>/dev/null`
+    glib_libs=`$pkg_config --libs glib-2.0 2>/dev/null`
     LIBS="$glib_libs $LIBS"
-    libs_qga="$glib_libs $libs_qga"
+    libs_qga="$glib_libs $libs_qga -lpthread -lrt"
 else
     echo "glib-$glib_req_ver required to compile QEMU"
     exit 1
@@ -2596,6 +2596,21 @@ if compile_prog "" "" ; then
 elif compile_prog "" "-lrt" ; then
   LIBS="-lrt $LIBS"
   clock_gettime=yes
+fi
+
+##########################################
+# Do we need timer_gettime + librt
+timer_gettime=no
+cat > $TMPC <<EOF
+#include <time.h>
+int main(void) { return timer_gettime(CLOCK_REALTIME, 0, NULL, NULL); }
+EOF
+
+if compile_prog "" "" ; then
+  timer_gettime=yes
+elif compile_prog "" "-lrt" ; then
+  LIBS="-lrt $LIBS"
+  timer_gettime=yes
 fi
 
 if test "$darwin" != "yes" -a "$mingw32" != "yes" -a "$solaris" != yes -a \
