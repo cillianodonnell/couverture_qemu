@@ -247,7 +247,7 @@ static void leon3_generic_hw_init(MachineState *machine)
 
     /* Allocate uart */
     if (serial_hds[0]) {
-        grlib_apbuart_create(0x80000100, serial_hds[0], cpu_irqs[3]);
+        grlib_apbuart_create(0x80000100, serial_hds[0], cpu_irqs, 3);
     }
 
     /* HostFS */
