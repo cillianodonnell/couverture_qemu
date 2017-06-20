@@ -167,6 +167,9 @@ static void leon3_generic_hw_init(MachineState *machine)
         qemu_register_reset(leon3_cpu_reset, cpu);
     }
 
+    /* Allocate AHB/APB PNP */
+    grlib_ambapnp_create(0xFFFFF000 /* AHB */, 0x800FF000 /* APB */);
+
     /* Allocate IRQ manager */
     b->irqmp = grlib_irqmp_create(0x80000200, smp_cpus, &cpu_irqs, MAX_PILS,
 				  leon3_set_pil_in, leon3_start_cpu, b);
